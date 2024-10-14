@@ -48,7 +48,7 @@ async def on_message(message):
 async def start_game(message):
     user_id = message.author.id
     user_games[user_id] = 0  # Start at game 0
-    await message.channel.send("Welcome to the CTF Challenge! Type `play` to start your first game.")
+    await message.channel.send("Welcome to the CTF Challenge! Type `!play` to start your first game.")
 
 @bot.command(name='play')
 async def play_game(ctx):
