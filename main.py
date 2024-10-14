@@ -12,6 +12,13 @@ part1= os.environ["part1"]
 part2= os.environ["part2"]
 part3= os.environ["part3"]
 part4= os.environ["part4"]
+
+answer1= os.environ["answer1"]
+answer2= os.environ["answer2"]
+answer3= os.environ["answer3"]
+answer4= os.environ["answer4"]
+
+
 # Flag parts for the games
 flag_parts = [part1,part2,part3,part4]
 user_games = {}  # To track user progress
@@ -67,7 +74,7 @@ async def game_0(ctx):
         return m.author == ctx.author and m.channel == ctx.channel
 
     msg = await bot.wait_for('message', check=check)
-    if msg.content.strip() == "13":
+    if msg.content.strip() == answer1:
         user_games[ctx.author.id] += 1
         await ctx.send("Correct! You earned a part of the flag: " + flag_parts[0])
         await play_game(ctx)  # Automatically proceed to the next game
@@ -82,7 +89,7 @@ async def game_1(ctx):
         return m.author == ctx.author and m.channel == ctx.channel
 
     msg = await bot.wait_for('message', check=check)
-    if msg.content.strip().lower() == "ff":
+    if msg.content.strip().lower() == answer2:
         user_games[ctx.author.id] += 1
         await ctx.send("Correct! You earned a part of the flag: " + flag_parts[1])
         await play_game(ctx)  # Automatically proceed to the next game
@@ -97,7 +104,7 @@ async def game_2(ctx):
         return m.author == ctx.author and m.channel == ctx.channel
 
     msg = await bot.wait_for('message', check=check)
-    if msg.content.strip().lower() == "echo":
+    if msg.content.strip().lower() == answer3:
         user_games[ctx.author.id] += 1
         await ctx.send("Correct! You earned a part of the flag: " + flag_parts[2])
         await play_game(ctx)  # Automatically proceed to the next game
@@ -112,7 +119,7 @@ async def game_3(ctx):
         return m.author == ctx.author and m.channel == ctx.channel
 
     msg = await bot.wait_for('message', check=check)
-    if msg.content.strip().lower() == "the letter m":
+    if msg.content.strip().lower() == answer4:
         user_games[ctx.author.id] += 1
         await ctx.send("Correct! You earned a part of the flag: " + flag_parts[3])
         await ctx.send("Congratulations! You've completed all the games! Here's your full flag: " + "".join(flag_parts))
