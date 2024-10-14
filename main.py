@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 import os
-import random
+import asyncio
 from keep_alive import keep_alive
 
 token = os.environ["token"]
@@ -35,7 +35,7 @@ async def on_message(message):
 async def start_game(message):
     user_id = message.author.id
     user_games[user_id] = 0  # Start at game 0
-    await message.channel.send("Welcome to the CTF Challenge! Type `!play` to start your first game.")
+    await message.channel.send("Welcome to the CTF Challenge! Type `play` to start your first game.")
 
 @bot.command(name='play')
 async def play_game(ctx):
@@ -54,41 +54,47 @@ async def play_game(ctx):
         await ctx.send("You have completed all the games! Here's your flag: " + "".join(flag_parts))
 
 async def game_0(ctx):
-    # Example puzzle for game 1
-    await ctx.send("Game 1: What is 5 + 3?")
+    # More difficult puzzle for game 1: Binary to Decimal
+    await ctx.send("Game 1: Convert this binary number to decimal: `1101`.")
     
     def check(m):
         return m.author == ctx.author and m.channel == ctx.channel
 
     try:
         msg = await bot.wait_for('message', check=check, timeout=15)
-        if msg.content == "8":
+        if msg.content.strip() == "13":
             user_games[ctx.author.id] += 1
             await ctx.send("Correct! You earned a part of the flag: " + flag_parts[0])
+            await play_game(ctx)  # Automatically proceed to the next game
         else:
-            await ctx.send("Wrong answer! Game over.")
+            await ctx.send("Wrong answer! Don't give up! Try again.")
+            await game_0(ctx)  # Give the user another chance
     except asyncio.TimeoutError:
-        await ctx.send("Time's up! Game over.")
+        await ctx.send("Time's up! Don't give up! Let's try that again.")
+        await game_0(ctx)  # Give the user another chance
 
 async def game_1(ctx):
-    # Example puzzle for game 2
-    await ctx.send("Game 2: What is the capital of France?")
+    # More difficult puzzle for game 2: Base conversion
+    await ctx.send("Game 2: What is the hexadecimal representation of the decimal number 255?")
     
     def check(m):
         return m.author == ctx.author and m.channel == ctx.channel
 
     try:
         msg = await bot.wait_for('message', check=check, timeout=15)
-        if msg.content.lower() == "paris":
+        if msg.content.strip().lower() == "ff":
             user_games[ctx.author.id] += 1
             await ctx.send("Correct! You earned a part of the flag: " + flag_parts[1])
+            await play_game(ctx)  # Automatically proceed to the next game
         else:
-            await ctx.send("Wrong answer! Game over.")
+            await ctx.send("Wrong answer! Don't give up! Try again.")
+            await game_1(ctx)  # Give the user another chance
     except asyncio.TimeoutError:
-        await ctx.send("Time's up! Game over.")
+        await ctx.send("Time's up! Don't give up! Let's try that again.")
+        await game_1(ctx)  # Give the user another chance
 
 async def game_2(ctx):
-    # Example puzzle for game 3
+    # Riddle for game 3
     await ctx.send("Game 3: Solve the riddle: I speak without a mouth and hear without ears. What am I?")
     
     def check(m):
@@ -96,16 +102,19 @@ async def game_2(ctx):
 
     try:
         msg = await bot.wait_for('message', check=check, timeout=15)
-        if msg.content.lower() == "echo":
+        if msg.content.strip().lower() == "echo":
             user_games[ctx.author.id] += 1
             await ctx.send("Correct! You earned a part of the flag: " + flag_parts[2])
+            await play_game(ctx)  # Automatically proceed to the next game
         else:
-            await ctx.send("Wrong answer! Game over.")
+            await ctx.send("Wrong answer! Don't give up! Try again.")
+            await game_2(ctx)  # Give the user another chance
     except asyncio.TimeoutError:
-        await ctx.send("Time's up! Game over.")
+        await ctx.send("Time's up! Don't give up! Let's try that again.")
+        await game_2(ctx)  # Give the user another chance
 
 async def game_3(ctx):
-    # Example puzzle for game 4
+    # Riddle for game 4
     await ctx.send("Game 4: What comes once in a minute, twice in a moment, but never in a thousand years?")
     
     def check(m):
@@ -113,15 +122,16 @@ async def game_3(ctx):
 
     try:
         msg = await bot.wait_for('message', check=check, timeout=15)
-        if msg.content.lower() == "the letter m":
+        if msg.content.strip().lower() == "the letter m":
             user_games[ctx.author.id] += 1
             await ctx.send("Correct! You earned a part of the flag: " + flag_parts[3])
+            await ctx.send("Congratulations! You've completed all the games! Here's your full flag: " + "".join(flag_parts))
         else:
-            await ctx.send("Wrong answer! Game over.")
+            await ctx.send("Wrong answer! Don't give up! Try again.")
+            await game_3(ctx)  # Give the user another chance
     except asyncio.TimeoutError:
-        await ctx.send("Time's up! Game over.")
+        await ctx.send("Time's up! Don't give up! Let's try that again.")
+        await game_3(ctx)  # Give the user another chance
 
 keep_alive()
 bot.run(token)
-
-
