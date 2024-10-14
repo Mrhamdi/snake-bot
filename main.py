@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import os
 import asyncio
+import random
 from keep_alive import keep_alive
 
 token = os.environ["token"]
@@ -17,6 +18,14 @@ flag_parts = [
     "fun_and_3asy}"
 ]
 user_games = {}  # To track user progress
+
+# Supportive messages
+supportive_messages = [
+    "Keep on keeping on!",
+    "Good luck today! I know you’ll do great.",
+    "You got this.",
+    "The expert at anything was once a beginner."
+]
 
 @bot.event
 async def on_ready():
@@ -67,10 +76,10 @@ async def game_0(ctx):
             await ctx.send("Correct! You earned a part of the flag: " + flag_parts[0])
             await play_game(ctx)  # Automatically proceed to the next game
         else:
-            await ctx.send("Wrong answer! Don't give up! Try again.")
+            await ctx.send("Wrong answer! " + random.choice(supportive_messages))
             await game_0(ctx)  # Give the user another chance
     except asyncio.TimeoutError:
-        await ctx.send("Time's up! Don't give up! Let's try that again.")
+        await ctx.send("Time's up! Let's try that again.")
         await game_0(ctx)  # Give the user another chance
 
 async def game_1(ctx):
@@ -87,10 +96,10 @@ async def game_1(ctx):
             await ctx.send("Correct! You earned a part of the flag: " + flag_parts[1])
             await play_game(ctx)  # Automatically proceed to the next game
         else:
-            await ctx.send("Wrong answer! Don't give up! Try again.")
+            await ctx.send("Wrong answer! " + random.choice(supportive_messages))
             await game_1(ctx)  # Give the user another chance
     except asyncio.TimeoutError:
-        await ctx.send("Time's up! Don't give up! Let's try that again.")
+        await ctx.send("Time's up! Let's try that again.")
         await game_1(ctx)  # Give the user another chance
 
 async def game_2(ctx):
@@ -107,10 +116,10 @@ async def game_2(ctx):
             await ctx.send("Correct! You earned a part of the flag: " + flag_parts[2])
             await play_game(ctx)  # Automatically proceed to the next game
         else:
-            await ctx.send("Wrong answer! Don't give up! Try again.")
+            await ctx.send("Wrong answer! " + random.choice(supportive_messages))
             await game_2(ctx)  # Give the user another chance
     except asyncio.TimeoutError:
-        await ctx.send("Time's up! Don't give up! Let's try that again.")
+        await ctx.send("Time's up! Let's try that again.")
         await game_2(ctx)  # Give the user another chance
 
 async def game_3(ctx):
@@ -127,10 +136,10 @@ async def game_3(ctx):
             await ctx.send("Correct! You earned a part of the flag: " + flag_parts[3])
             await ctx.send("Congratulations! You've completed all the games! Here's your full flag: " + "".join(flag_parts))
         else:
-            await ctx.send("Wrong answer! Don't give up! Try again.")
+            await ctx.send("Wrong answer! " + random.choice(supportive_messages))
             await game_3(ctx)  # Give the user another chance
     except asyncio.TimeoutError:
-        await ctx.send("Time's up! Don't give up! Let's try that again.")
+        await ctx.send("Time's up! Let's try that again.")
         await game_3(ctx)  # Give the user another chance
 
 keep_alive()
