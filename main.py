@@ -8,14 +8,12 @@ token = os.environ["token"]
 intents = discord.Intents.default()
 intents.messages = True
 bot = commands.Bot(command_prefix='!', intents=intents)
-
+part1= os.environ["part1"]
+part2= os.environ["part2"]
+part3= os.environ["part3"]
+part4= os.environ["part4"]
 # Flag parts for the games
-flag_parts = [
-    "Sicca{go4_",
-    "d1fficu1t_",
-    "g4m3s_ar3_",
-    "fun_and_3asy}"
-]
+flag_parts = [part1,part2,part3,part4]
 user_games = {}  # To track user progress
 
 # Supportive messages
