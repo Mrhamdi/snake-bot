@@ -63,7 +63,6 @@ async def play_game(ctx):
         await ctx.send("You have completed all the games! Here's your flag: " + "".join(flag_parts))
 
 async def game_0(ctx):
-    # More difficult puzzle for game 1: Binary to Decimal
     await ctx.send("Game 1: Convert this binary number to decimal: `1101`.")
     
     def check(m):
@@ -83,7 +82,6 @@ async def game_0(ctx):
         await game_0(ctx)  # Give the user another chance
 
 async def game_1(ctx):
-    # More difficult puzzle for game 2: Base conversion
     await ctx.send("Game 2: What is the hexadecimal representation of the decimal number 255?")
     
     def check(m):
@@ -103,7 +101,6 @@ async def game_1(ctx):
         await game_1(ctx)  # Give the user another chance
 
 async def game_2(ctx):
-    # Riddle for game 3
     await ctx.send("Game 3: Solve the riddle: I speak without a mouth and hear without ears. What am I?")
     
     def check(m):
@@ -123,7 +120,6 @@ async def game_2(ctx):
         await game_2(ctx)  # Give the user another chance
 
 async def game_3(ctx):
-    # Riddle for game 4
     await ctx.send("Game 4: What comes once in a minute, twice in a moment, but never in a thousand years?")
     
     def check(m):
