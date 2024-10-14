@@ -1,6 +1,6 @@
 # Snake Bot
 
-Welcome to **Snake Bot**, created by the **CyberSicca Club**! 
+Welcome to **Snake Bot**, created by **CyberSicca Club**
 
 ## Overview
 
