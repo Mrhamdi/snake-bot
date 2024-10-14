@@ -15,10 +15,10 @@ Snake Bot is a Discord bot designed to engage users in a fun and interactive way
 ## Commands
 
 - **`start`**: Begin your CTF Challenge.
-- **`play`**: Play the current game or move on to the next after answering correctly.
+- **`!play`**: Play the current game or move on to the next after answering correctly.
 
 ## Purpose
 
-Snake Bot aims to foster a sense of community and fun within Discord servers, making it a great addition for game nights, learning sessions, or casual entertainment. 
+Snake Bot aims to foster a sense of community and fun within Discord servers.
 
 Join the challenge and see if you can uncover the full flag! Happy gaming! 🐍🎮
