@@ -8,19 +8,19 @@ token = os.environ["token"]
 intents = discord.Intents.default()
 intents.messages = True
 bot = commands.Bot(command_prefix='!', intents=intents)
-part1= os.environ["part1"]
-part2= os.environ["part2"]
-part3= os.environ["part3"]
-part4= os.environ["part4"]
 
-answer1= os.environ["answer1"]
-answer2= os.environ["answer2"]
-answer3= os.environ["answer3"]
-answer4= os.environ["answer4"]
+part1 = os.environ["part1"]
+part2 = os.environ["part2"]
+part3 = os.environ["part3"]
+part4 = os.environ["part4"]
 
+answer1 = os.environ["answer1"]
+answer2 = os.environ["answer2"]
+answer3 = os.environ["answer3"]
+answer4 = os.environ["answer4"]
 
 # Flag parts for the games
-flag_parts = [part1,part2,part3,part4]
+flag_parts = [part1, part2, part3, part4]
 user_games = {}  # To track user progress
 
 # Supportive messages
@@ -47,6 +47,10 @@ async def on_message(message):
 
 async def start_game(message):
     user_id = message.author.id
+    if user_id in user_games:
+        await message.channel.send("You are already in a game! Finish it first before starting a new one.")
+        return
+
     user_games[user_id] = 0  # Start at game 0
     await message.channel.send("Welcome to the CTF Challenge! Type `!play` to start your first game.")
 
