@@ -62,15 +62,34 @@ async def play_game(ctx):
         await ctx.send("Please start the game by typing `start` first!")
         return
 
+    await ctx.send("You are already in a game! Type `!next` to continue or `!quit` to exit the game.")
+
+@bot.command(name='next')
+async def next_game(ctx):
+    user_id = ctx.author.id
+
+    if user_id not in user_games:
+        await ctx.send("You are not currently in a game! Type `start` to begin.")
+        return
+
     game_number = user_games[user_id]
 
     if game_number < len(flag_parts):
-        # Call the respective game function
         await globals()[f'game_{game_number}'](ctx)
     else:
         await ctx.send("You have completed all the games! Here's your flag: " + "".join(flag_parts))
         await ctx.send("Thank you for playing! Type `start` to play again.")
         del user_games[user_id]  # Remove user from games to allow restarting
+
+@bot.command(name='quit')
+async def quit_game(ctx):
+    user_id = ctx.author.id
+
+    if user_id in user_games:
+        del user_games[user_id]  # Remove user from games
+        await ctx.send("You have exited the game. Type `start` to play again.")
+    else:
+        await ctx.send("You are not currently in a game! Type `start` to begin.")
 
 async def game_0(ctx):
     await ctx.send("Game 1: Convert this binary number to decimal: `1101`.")
@@ -82,7 +101,7 @@ async def game_0(ctx):
     if msg.content.strip() == answer1:
         user_games[ctx.author.id] += 1
         await ctx.send("Correct! You earned a part of the flag: " + flag_parts[0])
-        await play_game(ctx)  # Automatically proceed to the next game
+        await next_game(ctx)  # Automatically proceed to the next game
     else:
         await ctx.send("Wrong answer! " + random.choice(supportive_messages))
         await game_0(ctx)  # Give the user another chance
@@ -97,7 +116,7 @@ async def game_1(ctx):
     if msg.content.strip().lower() == answer2:
         user_games[ctx.author.id] += 1
         await ctx.send("Correct! You earned a part of the flag: " + flag_parts[1])
-        await play_game(ctx)  # Automatically proceed to the next game
+        await next_game(ctx)  # Automatically proceed to the next game
     else:
         await ctx.send("Wrong answer! " + random.choice(supportive_messages))
         await game_1(ctx)  # Give the user another chance
@@ -112,7 +131,7 @@ async def game_2(ctx):
     if msg.content.strip().lower() == answer3:
         user_games[ctx.author.id] += 1
         await ctx.send("Correct! You earned a part of the flag: " + flag_parts[2])
-        await play_game(ctx)  # Automatically proceed to the next game
+        await next_game(ctx)  # Automatically proceed to the next game
     else:
         await ctx.send("Wrong answer! " + random.choice(supportive_messages))
         await game_2(ctx)  # Give the user another chance
