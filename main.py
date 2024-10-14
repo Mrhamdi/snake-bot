@@ -70,6 +70,7 @@ async def play_game(ctx):
     else:
         await ctx.send("You have completed all the games! Here's your flag: " + "".join(flag_parts))
         await ctx.send("Thank you for playing! Type `start` to play again.")
+        del user_games[user_id]  # Remove user from games to allow restarting
 
 async def game_0(ctx):
     await ctx.send("Game 1: Convert this binary number to decimal: `1101`.")
@@ -128,6 +129,7 @@ async def game_3(ctx):
         await ctx.send("Correct! You earned a part of the flag: " + flag_parts[3])
         await ctx.send("Congratulations! You've completed all the games! Here's your full flag: " + "".join(flag_parts))
         await ctx.send("Thank you for playing! Type `start` to play again.")
+        del user_games[ctx.author.id]  # Remove user from games to allow restarting
     else:
         await ctx.send("Wrong answer! " + random.choice(supportive_messages))
         await game_3(ctx)  # Give the user another chance
