@@ -9,18 +9,9 @@ intents = discord.Intents.default()
 intents.messages = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-part1 = os.environ["part1"]
-part2 = os.environ["part2"]
-part3 = os.environ["part3"]
-part4 = os.environ["part4"]
-
-answer1 = os.environ["answer1"]
-answer2 = os.environ["answer2"]
-answer3 = os.environ["answer3"]
-answer4 = os.environ["answer4"]
-
-# Flag parts for the games
-flag_parts = [part1, part2, part3, part4]
+# Game variables
+flag_parts = [os.environ[f"part{i}"] for i in range(1, 5)]
+answers = [os.environ[f"answer{i}"] for i in range(1, 5)]
 user_games = {}  # To track user progress
 
 # Supportive messages
@@ -48,7 +39,7 @@ async def on_message(message):
 async def start_game(message):
     user_id = message.author.id
     if user_id in user_games:
-        await message.channel.send("You are already in a game! Finish it first before starting a new one.")
+        await message.channel.send("You're already in a game! Type `!play` to continue.")
         return
 
     user_games[user_id] = 0  # Start at game 0
@@ -62,96 +53,53 @@ async def play_game(ctx):
         await ctx.send("Please start the game by typing `start` first!")
         return
 
-    await ctx.send("You are already in a game! Type `!next` to continue or `!quit` to exit the game.")
-
-@bot.command(name='next')
-async def next_game(ctx):
-    user_id = ctx.author.id
-
-    if user_id not in user_games:
-        await ctx.send("You are not currently in a game! Type `start` to begin.")
-        return
-
     game_number = user_games[user_id]
-
+    
     if game_number < len(flag_parts):
         await globals()[f'game_{game_number}'](ctx)
     else:
-        await ctx.send("You have completed all the games! Here's your flag: " + "".join(flag_parts))
+        await ctx.send("You've completed all the games! Here's your flag: " + "".join(flag_parts))
         await ctx.send("Thank you for playing! Type `start` to play again.")
-        del user_games[user_id]  # Remove user from games to allow restarting
-
-@bot.command(name='quit')
-async def quit_game(ctx):
-    user_id = ctx.author.id
-
-    if user_id in user_games:
-        del user_games[user_id]  # Remove user from games
-        await ctx.send("You have exited the game. Type `start` to play again.")
-    else:
-        await ctx.send("You are not currently in a game! Type `start` to begin.")
+        del user_games[user_id]  # Reset user game progress
 
 async def game_0(ctx):
     await ctx.send("Game 1: Convert this binary number to decimal: `1101`.")
-    
-    def check(m):
-        return m.author == ctx.author and m.channel == ctx.channel
-
-    msg = await bot.wait_for('message', check=check)
-    if msg.content.strip() == answer1:
-        user_games[ctx.author.id] += 1
-        await ctx.send("Correct! You earned a part of the flag: " + flag_parts[0])
-        await next_game(ctx)  # Automatically proceed to the next game
-    else:
-        await ctx.send("Wrong answer! " + random.choice(supportive_messages))
-        await game_0(ctx)  # Give the user another chance
+    await wait_for_answer(ctx, 0)
 
 async def game_1(ctx):
     await ctx.send("Game 2: What is the hexadecimal representation of the decimal number 255?")
-    
-    def check(m):
-        return m.author == ctx.author and m.channel == ctx.channel
-
-    msg = await bot.wait_for('message', check=check)
-    if msg.content.strip().lower() == answer2:
-        user_games[ctx.author.id] += 1
-        await ctx.send("Correct! You earned a part of the flag: " + flag_parts[1])
-        await next_game(ctx)  # Automatically proceed to the next game
-    else:
-        await ctx.send("Wrong answer! " + random.choice(supportive_messages))
-        await game_1(ctx)  # Give the user another chance
+    await wait_for_answer(ctx, 1)
 
 async def game_2(ctx):
     await ctx.send("Game 3: Solve the riddle: I speak without a mouth and hear without ears. What am I?")
-    
-    def check(m):
-        return m.author == ctx.author and m.channel == ctx.channel
-
-    msg = await bot.wait_for('message', check=check)
-    if msg.content.strip().lower() == answer3:
-        user_games[ctx.author.id] += 1
-        await ctx.send("Correct! You earned a part of the flag: " + flag_parts[2])
-        await next_game(ctx)  # Automatically proceed to the next game
-    else:
-        await ctx.send("Wrong answer! " + random.choice(supportive_messages))
-        await game_2(ctx)  # Give the user another chance
+    await wait_for_answer(ctx, 2)
 
 async def game_3(ctx):
     await ctx.send("Game 4: What comes once in a minute, twice in a moment, but never in a thousand years?")
-    
+    await wait_for_answer(ctx, 3)
+
+async def wait_for_answer(ctx, game_index):
+    user_id = ctx.author.id
+
     def check(m):
         return m.author == ctx.author and m.channel == ctx.channel
 
-    msg = await bot.wait_for('message', check=check)
-    if msg.content.strip().lower() == answer4:
-        user_games[ctx.author.id] += 1
-        await ctx.send("Correct! You earned a part of the flag: " + flag_parts[3])
-        await ctx.send("Congratulations! You've completed all the games! Here's your full flag: " + "".join(flag_parts))
-        await ctx.send("Thank you for playing! Type `start` to play again.")
-        del user_games[ctx.author.id]  # Remove user from games to allow restarting
-    else:
-        await ctx.send("Wrong answer! " + random.choice(supportive_messages))
-        await game_3(ctx)  # Give the user another chance
+    while True:
+        try:
+            msg = await bot.wait_for('message', check=check)
+            if msg.content.strip().lower() == answers[game_index]:
+                user_games[user_id] += 1
+                await ctx.send("Correct! You earned a part of the flag: " + flag_parts[game_index])
+                await play_game(ctx)  # Automatically proceed to the next game
+                break
+            else:
+                await ctx.send("Wrong answer! " + random.choice(supportive_messages))
+        except discord.Forbidden:
+            await ctx.send("I can't send messages in this channel.")
+            break
+        except Exception as e:
+            await ctx.send(f"An error occurred: {str(e)}")
+            break
 
 keep_alive()
 bot.run(token)
