@@ -10,11 +10,47 @@ intents.messages = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 # Game variables
-flag_parts = [os.environ[f"part{i}"] for i in range(1, 11)]
-answers = [os.environ[f"answer{i}"] for i in range(1, 11)]
-game_names = [os.environ[f"game_name{i}"] for i in range(1, 11)]
-user_games = {}  # To track user progress
-completed_games = {}  # Track completed games for users
+flag_parts = [
+    os.environ["part1"],
+    os.environ["part2"],
+    os.environ["part3"],
+    os.environ["part4"],
+    os.environ["part5"],
+    os.environ["part6"],
+    os.environ["part7"],
+    os.environ["part8"],
+    os.environ["part9"],
+    os.environ["part10"]
+]
+
+answers = [
+    os.environ["answer1"],  # Binary to decimal
+    os.environ["answer2"],  # Hexadecimal of 255
+    os.environ["answer3"],  # Riddle
+    os.environ["answer4"],  # Riddle
+    os.environ["answer5"],  # Riddle: What has keys but can't open locks?
+    os.environ["answer6"],  # Cryptography: Reverse "dlrow olleh"
+    os.environ["answer7"],  # Riddle: What has a heart that doesn't beat?
+    os.environ["answer8"],  # Cryptography: Caesar cipher for "hello"
+    os.environ["answer9"],  # Riddle: What runs but never walks?
+    os.environ["answer10"]   # Simple math: What is 5 + 3?
+]
+
+game_names = [
+    "Binary to Decimal Conversion",
+    "Hexadecimal Conversion",
+    "Riddle: Speak Without a Mouth",
+    "Riddle: Once in a Minute",
+    "Riddle: Keys But No Locks",
+    "Cryptography: Reverse a String",
+    "Riddle: Heart That Doesn't Beat",
+    "Cryptography: Caesar Cipher",
+    "Riddle: Runs but Never Walks",
+    "Math Question: Simple Addition"
+]
+
+user_games = {}
+completed_games = {}
 
 # Supportive messages
 supportive_messages = [
@@ -44,7 +80,7 @@ async def show_game_list(message):
         await message.channel.send("You're already in a game! Type `!change` to switch games or answer the current one.")
         return
 
-    user_games[user_id] = []  # Initialize the user's game state
+    user_games[user_id] = []
     game_list = "\n".join(f"{i + 1}: {game_names[i]}" for i in range(len(game_names)))
     await message.channel.send(f"Welcome to the CTF Challenge! Here are the available games:\n{game_list}\nType the game number to start.")
 
@@ -95,13 +131,29 @@ async def game_3(message):
     await message.channel.send("Game 4: What comes once in a minute, twice in a moment, but never in a thousand years?")
     await wait_for_answer(message, 3)
 
-# Add more game functions as needed...
-# Example for games 4-9:
 async def game_4(message):
-    await message.channel.send("Game 5: What is the capital of France?")
+    await message.channel.send("Game 5: What has keys but can't open locks?")
     await wait_for_answer(message, 4)
 
-# This should include your existing game logic for games 5 through 9.
+async def game_5(message):
+    await message.channel.send("Game 6: Reverse the following string: `dlrow olleh`.")
+    await wait_for_answer(message, 5)
+
+async def game_6(message):
+    await message.channel.send("Game 7: What has a heart that doesn't beat?")
+    await wait_for_answer(message, 6)
+
+async def game_7(message):
+    await message.channel.send("Game 8: What is 'khoor' when shifted by 3 letters (Caesar cipher)?")
+    await wait_for_answer(message, 7)
+
+async def game_8(message):
+    await message.channel.send("Game 9: What runs but never walks?")
+    await wait_for_answer(message, 8)
+
+async def game_9(message):
+    await message.channel.send("Game 10: What is 5 + 3?")
+    await wait_for_answer(message, 9)
 
 async def wait_for_answer(message, game_index):
     user_id = message.author.id
@@ -116,10 +168,10 @@ async def wait_for_answer(message, game_index):
                 completed_games[user_id] = []
             completed_games[user_id].append(game_index)
             await message.channel.send("Correct! You earned a part of the flag: " + flag_parts[game_index])
-            await show_game_list(message)  # Show the game list again after winning
+            await show_game_list(message)
         else:
             await message.channel.send("Wrong answer! " + random.choice(supportive_messages))
-            await wait_for_answer(message, game_index)  # Wait for another answer
+            await wait_for_answer(message, game_index)
     except Exception as e:
         await message.channel.send(f"An error occurred: {str(e)}")
 
