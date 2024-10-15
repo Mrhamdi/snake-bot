@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import os
+from keep_alive import keep_alive
 
 token = os.environ["token"]
 intents = discord.Intents.default()
@@ -20,11 +21,13 @@ async def on_message(message):
         await message.channel.send(f"Hello, {message.author.name}! How can I help you today?")
     elif message.content.lower() == "start":
         await message.channel.send("Welcome! Type `!commands` for available commands.")
+    elif message.content.lower() == "start":
+        await message.channel.send("Welcome! Type `!commands` for available commands.")   
     
     await bot.process_commands(message)
 
 @bot.command(name='commands')
 async def commands_list(ctx):
     await ctx.send("Available commands:\n`hello` - Greet the bot\n`start` - Get a welcome message")
-
+keep_alive()
 bot.run(token)
