@@ -35,10 +35,10 @@ player_res = {}
 completed_games = {}
 incorrect_attempts = {}
 flags = [
-    "part1", "part2", "part3", 
-    "part4", "part5", "part6", 
-    "part7", "part8", "part9", 
-    "part10"
+    part1, part2, part3, 
+    part4, part5,part6, 
+    part7, part8,part9, 
+    part10
 ]
 total_games = len(flags)
 
