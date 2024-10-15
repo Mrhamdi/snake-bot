@@ -19,12 +19,12 @@ async def on_message(message):
     if message.content.lower() == "hello":
         await message.channel.send(f"Hello, {message.author.name}! How can I help you today?")
     elif message.content.lower() == "start":
-        await message.channel.send("Welcome! Type `!help` for commands.")
+        await message.channel.send("Welcome! Type `!commands` for available commands.")
     
     await bot.process_commands(message)
 
-@bot.command(name='help')
-async def help_command(ctx):
+@bot.command(name='commands')
+async def commands_list(ctx):
     await ctx.send("Available commands:\n`hello` - Greet the bot\n`start` - Get a welcome message")
 
 keep_alive()  # If you're using a keep_alive function to keep the bot running
