@@ -27,5 +27,4 @@ async def on_message(message):
 async def commands_list(ctx):
     await ctx.send("Available commands:\n`hello` - Greet the bot\n`start` - Get a welcome message")
 
-keep_alive()  # If you're using a keep_alive function to keep the bot running
 bot.run(token)
