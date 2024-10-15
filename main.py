@@ -77,10 +77,6 @@ async def play_game(ctx):
     if game_number < len(flag_parts):
         # Call the respective game function
         await globals()[f'game_{game_number}'](ctx)
-    else:
-        await ctx.send("You have completed all the games! Here's your flag: " + "".join(flag_parts))
-        await ctx.send("Thank you for playing! Type `start` to play again.")
-        del active_games[user_id]  # Mark user as inactive
 
 @bot.command(name='exit')
 async def exit_game(ctx):
@@ -98,15 +94,15 @@ async def game_0(ctx):
     def check(m):
         return m.author == ctx.author and m.channel == ctx.channel
 
-    msg = await bot.wait_for('message', check=check)
-    if msg.content.strip() == answer1:
-        user_games[ctx.author.id] += 1
-        await ctx.send("Correct! You earned a part of the flag: " + flag_parts[0])
-        await play_game(ctx)  # Automatically proceed to the next game
-    else:
-        await ctx.send("Wrong answer! The correct answer was: " + answer1)
-        user_games[ctx.author.id] += 1  # Move to next game despite failure
-        await play_game(ctx)  # Move on to the next game
+    while True:  # Keep asking until the user answers correctly
+        msg = await bot.wait_for('message', check=check)
+        if msg.content.strip() == answer1:
+            user_games[ctx.author.id] += 1
+            await ctx.send("Correct! You earned a part of the flag: " + flag_parts[0])
+            await play_game(ctx)  # Automatically proceed to the next game
+            break
+        else:
+            await ctx.send("Wrong answer! " + random.choice(supportive_messages))
 
 async def game_1(ctx):
     await ctx.send("Game 2: What is the hexadecimal representation of the decimal number 255?")
@@ -114,15 +110,15 @@ async def game_1(ctx):
     def check(m):
         return m.author == ctx.author and m.channel == ctx.channel
 
-    msg = await bot.wait_for('message', check=check)
-    if msg.content.strip().lower() == answer2:
-        user_games[ctx.author.id] += 1
-        await ctx.send("Correct! You earned a part of the flag: " + flag_parts[1])
-        await play_game(ctx)  # Automatically proceed to the next game
-    else:
-        await ctx.send("Wrong answer! The correct answer was: " + answer2)
-        user_games[ctx.author.id] += 1  # Move to next game despite failure
-        await play_game(ctx)  # Move on to the next game
+    while True:  # Keep asking until the user answers correctly
+        msg = await bot.wait_for('message', check=check)
+        if msg.content.strip().lower() == answer2:
+            user_games[ctx.author.id] += 1
+            await ctx.send("Correct! You earned a part of the flag: " + flag_parts[1])
+            await play_game(ctx)  # Automatically proceed to the next game
+            break
+        else:
+            await ctx.send("Wrong answer! " + random.choice(supportive_messages))
 
 async def game_2(ctx):
     await ctx.send("Game 3: Solve the riddle: I speak without a mouth and hear without ears. What am I?")
@@ -130,15 +126,15 @@ async def game_2(ctx):
     def check(m):
         return m.author == ctx.author and m.channel == ctx.channel
 
-    msg = await bot.wait_for('message', check=check)
-    if msg.content.strip().lower() == answer3:
-        user_games[ctx.author.id] += 1
-        await ctx.send("Correct! You earned a part of the flag: " + flag_parts[2])
-        await play_game(ctx)  # Automatically proceed to the next game
-    else:
-        await ctx.send("Wrong answer! The correct answer was: " + answer3)
-        user_games[ctx.author.id] += 1  # Move to next game despite failure
-        await play_game(ctx)  # Move on to the next game
+    while True:  # Keep asking until the user answers correctly
+        msg = await bot.wait_for('message', check=check)
+        if msg.content.strip().lower() == answer3:
+            user_games[ctx.author.id] += 1
+            await ctx.send("Correct! You earned a part of the flag: " + flag_parts[2])
+            await play_game(ctx)  # Automatically proceed to the next game
+            break
+        else:
+            await ctx.send("Wrong answer! " + random.choice(supportive_messages))
 
 async def game_3(ctx):
     await ctx.send("Game 4: What comes once in a minute, twice in a moment, but never in a thousand years?")
@@ -146,17 +142,17 @@ async def game_3(ctx):
     def check(m):
         return m.author == ctx.author and m.channel == ctx.channel
 
-    msg = await bot.wait_for('message', check=check)
-    if msg.content.strip().lower() == answer4:
-        user_games[ctx.author.id] += 1
-        await ctx.send("Correct! You earned a part of the flag: " + flag_parts[3])
-        await ctx.send("Congratulations! You've completed all the games! Here's your full flag: " + "".join(flag_parts))
-        await ctx.send("Thank you for playing! Type `start` to play again.")
-    else:
-        await ctx.send("Wrong answer! The correct answer was: " + answer4)
-        await ctx.send("Thank you for playing! Type `start` to play again.")
-
-    del active_games[ctx.author.id]  # Mark user as inactive
+    while True:  # Keep asking until the user answers correctly
+        msg = await bot.wait_for('message', check=check)
+        if msg.content.strip().lower() == answer4:
+            user_games[ctx.author.id] += 1
+            await ctx.send("Correct! You earned a part of the flag: " + flag_parts[3])
+            await ctx.send("Congratulations! You've completed all the games! Here's your full flag: " + "".join(flag_parts))
+            await ctx.send("Thank you for playing! Type `start` to play again.")
+            del active_games[ctx.author.id]  # Mark user as inactive
+            break
+        else:
+            await ctx.send("Wrong answer! " + random.choice(supportive_messages))
 
 keep_alive()
 bot.run(token)
