@@ -36,6 +36,11 @@ supportive_messages = [
 async def on_ready():
     print(f'Bot is ready as {bot.user}!')
 
+    # Reset user progress on server restart
+    global user_games, active_games
+    user_games = {}
+    active_games = {}
+
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
@@ -54,7 +59,7 @@ async def start_game(message):
 
     user_games[user_id] = 0  # Start at game 0
     active_games[user_id] = True  # Mark user as active in a game
-    await message.channel.send("Welcome to the CTF Challenge! Type `!play` to start your first game.")
+    await message.channel.send(f"Welcome to the CTF Challenge, {message.author.name}! Type `!play` to start your first game.")
 
 @bot.command(name='play')
 async def play_game(ctx):
