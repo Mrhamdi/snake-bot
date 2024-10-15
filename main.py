@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from keep_alive import keep_alive
-
+import os 
 # Set up your token and intents
 token = os.environ["token"]
 part1 = os.environ["part1"]
