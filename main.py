@@ -68,8 +68,8 @@ async def play_game(ctx):
         await ctx.send("Please start the game by typing `start` first!")
         return
 
-    if user_id in active_games:
-        await ctx.send("You are already in a game! Please finish the current game first.")
+    if user_id not in active_games:
+        await ctx.send("You are not currently in a game! Type `start` to begin.")
         return
 
     game_number = user_games[user_id]
