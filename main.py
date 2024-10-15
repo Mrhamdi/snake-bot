@@ -35,7 +35,6 @@ supportive_messages = [
 @bot.event
 async def on_ready():
     print(f'Bot is ready as {bot.user}!')
-    # Reset user progress on server restart
     global user_games, active_games
     user_games = {}
     active_games = {}
@@ -43,6 +42,11 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
+        return
+
+    # Ignore commands if the user is in an active game
+    if message.author.id in active_games and message.content.lower() in ["start", "!play"]:
+        await message.channel.send("You are already in a game! Please finish the current game first.")
         return
 
     if message.content.lower() == "start":
