@@ -8,19 +8,19 @@ token = os.environ["token"]
 intents = discord.Intents.default()
 intents.messages = True
 bot = commands.Bot(command_prefix='!', intents=intents)
-part1= os.environ["part1"]
-part2= os.environ["part2"]
-part3= os.environ["part3"]
-part4= os.environ["part4"]
 
-answer1= os.environ["answer1"]
-answer2= os.environ["answer2"]
-answer3= os.environ["answer3"]
-answer4= os.environ["answer4"]
+part1 = os.environ["part1"]
+part2 = os.environ["part2"]
+part3 = os.environ["part3"]
+part4 = os.environ["part4"]
 
+answer1 = os.environ["answer1"]
+answer2 = os.environ["answer2"]
+answer3 = os.environ["answer3"]
+answer4 = os.environ["answer4"]
 
 # Flag parts for the games
-flag_parts = [part1,part2,part3,part4]
+flag_parts = [part1, part2, part3, part4]
 user_games = {}  # To track user progress
 
 # Supportive messages
@@ -69,64 +69,93 @@ async def play_game(ctx):
 
 async def game_0(ctx):
     await ctx.send("Game 1: Convert this binary number to decimal: `1101`.")
-    
-    def check(m):
-        return m.author == ctx.author and m.channel == ctx.channel
+    attempts = 0  # Track attempts
 
-    msg = await bot.wait_for('message', check=check)
-    if msg.content.strip() == answer1:
-        user_games[ctx.author.id] += 1
-        await ctx.send("Correct! You earned a part of the flag: " + flag_parts[0])
-        await play_game(ctx)  # Automatically proceed to the next game
-    else:
-        await ctx.send("Wrong answer! " + random.choice(supportive_messages))
-        await game_0(ctx)  # Give the user another chance
+    while attempts < 3:  # Allow up to 3 attempts
+        def check(m):
+            return m.author == ctx.author and m.channel == ctx.channel
+
+        msg = await bot.wait_for('message', check=check)
+        if msg.content.strip() == answer1:
+            user_games[ctx.author.id] += 1
+            await ctx.send("Correct! You earned a part of the flag: " + flag_parts[0])
+            await play_game(ctx)  # Automatically proceed to the next game
+            return
+        else:
+            attempts += 1
+            if attempts < 3:
+                await ctx.send("Wrong answer! You have {} attempts left. {}".format(3 - attempts, random.choice(supportive_messages)))
+            else:
+                await ctx.send("Wrong answer! You've used all attempts. The correct answer was: " + answer1)
+                await play_game(ctx)  # Move on to the next game
 
 async def game_1(ctx):
     await ctx.send("Game 2: What is the hexadecimal representation of the decimal number 255?")
-    
-    def check(m):
-        return m.author == ctx.author and m.channel == ctx.channel
+    attempts = 0  # Track attempts
 
-    msg = await bot.wait_for('message', check=check)
-    if msg.content.strip().lower() == answer2:
-        user_games[ctx.author.id] += 1
-        await ctx.send("Correct! You earned a part of the flag: " + flag_parts[1])
-        await play_game(ctx)  # Automatically proceed to the next game
-    else:
-        await ctx.send("Wrong answer! " + random.choice(supportive_messages))
-        await game_1(ctx)  # Give the user another chance
+    while attempts < 3:  # Allow up to 3 attempts
+        def check(m):
+            return m.author == ctx.author and m.channel == ctx.channel
+
+        msg = await bot.wait_for('message', check=check)
+        if msg.content.strip().lower() == answer2:
+            user_games[ctx.author.id] += 1
+            await ctx.send("Correct! You earned a part of the flag: " + flag_parts[1])
+            await play_game(ctx)  # Automatically proceed to the next game
+            return
+        else:
+            attempts += 1
+            if attempts < 3:
+                await ctx.send("Wrong answer! You have {} attempts left. {}".format(3 - attempts, random.choice(supportive_messages)))
+            else:
+                await ctx.send("Wrong answer! You've used all attempts. The correct answer was: " + answer2)
+                await play_game(ctx)  # Move on to the next game
 
 async def game_2(ctx):
     await ctx.send("Game 3: Solve the riddle: I speak without a mouth and hear without ears. What am I?")
-    
-    def check(m):
-        return m.author == ctx.author and m.channel == ctx.channel
+    attempts = 0  # Track attempts
 
-    msg = await bot.wait_for('message', check=check)
-    if msg.content.strip().lower() == answer3:
-        user_games[ctx.author.id] += 1
-        await ctx.send("Correct! You earned a part of the flag: " + flag_parts[2])
-        await play_game(ctx)  # Automatically proceed to the next game
-    else:
-        await ctx.send("Wrong answer! " + random.choice(supportive_messages))
-        await game_2(ctx)  # Give the user another chance
+    while attempts < 3:  # Allow up to 3 attempts
+        def check(m):
+            return m.author == ctx.author and m.channel == ctx.channel
+
+        msg = await bot.wait_for('message', check=check)
+        if msg.content.strip().lower() == answer3:
+            user_games[ctx.author.id] += 1
+            await ctx.send("Correct! You earned a part of the flag: " + flag_parts[2])
+            await play_game(ctx)  # Automatically proceed to the next game
+            return
+        else:
+            attempts += 1
+            if attempts < 3:
+                await ctx.send("Wrong answer! You have {} attempts left. {}".format(3 - attempts, random.choice(supportive_messages)))
+            else:
+                await ctx.send("Wrong answer! You've used all attempts. The correct answer was: " + answer3)
+                await play_game(ctx)  # Move on to the next game
 
 async def game_3(ctx):
     await ctx.send("Game 4: What comes once in a minute, twice in a moment, but never in a thousand years?")
-    
-    def check(m):
-        return m.author == ctx.author and m.channel == ctx.channel
+    attempts = 0  # Track attempts
 
-    msg = await bot.wait_for('message', check=check)
-    if msg.content.strip().lower() == answer4:
-        user_games[ctx.author.id] += 1
-        await ctx.send("Correct! You earned a part of the flag: " + flag_parts[3])
-        await ctx.send("Congratulations! You've completed all the games! Here's your full flag: " + "".join(flag_parts))
-        await ctx.send("Thank you for playing! Type `start` to play again.")
-    else:
-        await ctx.send("Wrong answer! " + random.choice(supportive_messages))
-        await game_3(ctx)  # Give the user another chance
+    while attempts < 3:  # Allow up to 3 attempts
+        def check(m):
+            return m.author == ctx.author and m.channel == ctx.channel
+
+        msg = await bot.wait_for('message', check=check)
+        if msg.content.strip().lower() == answer4:
+            user_games[ctx.author.id] += 1
+            await ctx.send("Correct! You earned a part of the flag: " + flag_parts[3])
+            await ctx.send("Congratulations! You've completed all the games! Here's your full flag: " + "".join(flag_parts))
+            await ctx.send("Thank you for playing! Type `start` to play again.")
+            return
+        else:
+            attempts += 1
+            if attempts < 3:
+                await ctx.send("Wrong answer! You have {} attempts left. {}".format(3 - attempts, random.choice(supportive_messages)))
+            else:
+                await ctx.send("Wrong answer! You've used all attempts. The correct answer was: " + answer4)
+                await ctx.send("Thank you for playing! Type `start` to play again.")
+                return
 
 keep_alive()
 bot.run(token)
