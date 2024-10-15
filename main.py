@@ -35,7 +35,6 @@ supportive_messages = [
 @bot.event
 async def on_ready():
     print(f'Bot is ready as {bot.user}!')
-
     # Reset user progress on server restart
     global user_games, active_games
     user_games = {}
@@ -82,6 +81,16 @@ async def play_game(ctx):
         await ctx.send("You have completed all the games! Here's your flag: " + "".join(flag_parts))
         await ctx.send("Thank you for playing! Type `start` to play again.")
         del active_games[user_id]  # Mark user as inactive
+
+@bot.command(name='exit')
+async def exit_game(ctx):
+    user_id = ctx.author.id
+    if user_id in active_games:
+        del active_games[user_id]  # Remove user from active games
+        del user_games[user_id]  # Reset user progress
+        await ctx.send("You have exited the game. You can now type `start` to play again.")
+    else:
+        await ctx.send("You are not currently in a game.")
 
 async def game_0(ctx):
     await ctx.send("Game 1: Convert this binary number to decimal: `1101`.")
