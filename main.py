@@ -22,6 +22,7 @@ answer4 = os.environ["answer4"]
 # Flag parts for the games
 flag_parts = [part1, part2, part3, part4]
 user_games = {}  # To track user progress
+active_games = {}  # To track if a user is in an active game
 
 # Supportive messages
 supportive_messages = [
@@ -47,7 +48,12 @@ async def on_message(message):
 
 async def start_game(message):
     user_id = message.author.id
+    if user_id in active_games:
+        await message.channel.send("You are already in a game! Please finish the current game first.")
+        return
+
     user_games[user_id] = 0  # Start at game 0
+    active_games[user_id] = True  # Mark user as active in a game
     await message.channel.send("Welcome to the CTF Challenge! Type `!play` to start your first game.")
 
 @bot.command(name='play')
@@ -58,6 +64,10 @@ async def play_game(ctx):
         await ctx.send("Please start the game by typing `start` first!")
         return
 
+    if user_id in active_games:
+        await ctx.send("You are already in a game! Please finish the current game first.")
+        return
+
     game_number = user_games[user_id]
 
     if game_number < len(flag_parts):
@@ -66,96 +76,73 @@ async def play_game(ctx):
     else:
         await ctx.send("You have completed all the games! Here's your flag: " + "".join(flag_parts))
         await ctx.send("Thank you for playing! Type `start` to play again.")
+        del active_games[user_id]  # Mark user as inactive
 
 async def game_0(ctx):
     await ctx.send("Game 1: Convert this binary number to decimal: `1101`.")
-    attempts = 0  # Track attempts
+    
+    def check(m):
+        return m.author == ctx.author and m.channel == ctx.channel
 
-    while attempts < 3:  # Allow up to 3 attempts
-        def check(m):
-            return m.author == ctx.author and m.channel == ctx.channel
-
-        msg = await bot.wait_for('message', check=check)
-        if msg.content.strip() == answer1:
-            user_games[ctx.author.id] += 1
-            await ctx.send("Correct! You earned a part of the flag: " + flag_parts[0])
-            await play_game(ctx)  # Automatically proceed to the next game
-            return
-        else:
-            attempts += 1
-            if attempts < 3:
-                await ctx.send("Wrong answer! You have {} attempts left. {}".format(3 - attempts, random.choice(supportive_messages)))
-            else:
-                await ctx.send("Wrong answer! You've used all attempts. The correct answer was: " + answer1)
-                await play_game(ctx)  # Move on to the next game
+    msg = await bot.wait_for('message', check=check)
+    if msg.content.strip() == answer1:
+        user_games[ctx.author.id] += 1
+        await ctx.send("Correct! You earned a part of the flag: " + flag_parts[0])
+        await play_game(ctx)  # Automatically proceed to the next game
+    else:
+        await ctx.send("Wrong answer! The correct answer was: " + answer1)
+        user_games[ctx.author.id] += 1  # Move to next game despite failure
+        await play_game(ctx)  # Move on to the next game
 
 async def game_1(ctx):
     await ctx.send("Game 2: What is the hexadecimal representation of the decimal number 255?")
-    attempts = 0  # Track attempts
+    
+    def check(m):
+        return m.author == ctx.author and m.channel == ctx.channel
 
-    while attempts < 3:  # Allow up to 3 attempts
-        def check(m):
-            return m.author == ctx.author and m.channel == ctx.channel
-
-        msg = await bot.wait_for('message', check=check)
-        if msg.content.strip().lower() == answer2:
-            user_games[ctx.author.id] += 1
-            await ctx.send("Correct! You earned a part of the flag: " + flag_parts[1])
-            await play_game(ctx)  # Automatically proceed to the next game
-            return
-        else:
-            attempts += 1
-            if attempts < 3:
-                await ctx.send("Wrong answer! You have {} attempts left. {}".format(3 - attempts, random.choice(supportive_messages)))
-            else:
-                await ctx.send("Wrong answer! You've used all attempts. The correct answer was: " + answer2)
-                await play_game(ctx)  # Move on to the next game
+    msg = await bot.wait_for('message', check=check)
+    if msg.content.strip().lower() == answer2:
+        user_games[ctx.author.id] += 1
+        await ctx.send("Correct! You earned a part of the flag: " + flag_parts[1])
+        await play_game(ctx)  # Automatically proceed to the next game
+    else:
+        await ctx.send("Wrong answer! The correct answer was: " + answer2)
+        user_games[ctx.author.id] += 1  # Move to next game despite failure
+        await play_game(ctx)  # Move on to the next game
 
 async def game_2(ctx):
     await ctx.send("Game 3: Solve the riddle: I speak without a mouth and hear without ears. What am I?")
-    attempts = 0  # Track attempts
+    
+    def check(m):
+        return m.author == ctx.author and m.channel == ctx.channel
 
-    while attempts < 3:  # Allow up to 3 attempts
-        def check(m):
-            return m.author == ctx.author and m.channel == ctx.channel
-
-        msg = await bot.wait_for('message', check=check)
-        if msg.content.strip().lower() == answer3:
-            user_games[ctx.author.id] += 1
-            await ctx.send("Correct! You earned a part of the flag: " + flag_parts[2])
-            await play_game(ctx)  # Automatically proceed to the next game
-            return
-        else:
-            attempts += 1
-            if attempts < 3:
-                await ctx.send("Wrong answer! You have {} attempts left. {}".format(3 - attempts, random.choice(supportive_messages)))
-            else:
-                await ctx.send("Wrong answer! You've used all attempts. The correct answer was: " + answer3)
-                await play_game(ctx)  # Move on to the next game
+    msg = await bot.wait_for('message', check=check)
+    if msg.content.strip().lower() == answer3:
+        user_games[ctx.author.id] += 1
+        await ctx.send("Correct! You earned a part of the flag: " + flag_parts[2])
+        await play_game(ctx)  # Automatically proceed to the next game
+    else:
+        await ctx.send("Wrong answer! The correct answer was: " + answer3)
+        user_games[ctx.author.id] += 1  # Move to next game despite failure
+        await play_game(ctx)  # Move on to the next game
 
 async def game_3(ctx):
     await ctx.send("Game 4: What comes once in a minute, twice in a moment, but never in a thousand years?")
-    attempts = 0  # Track attempts
+    
+    def check(m):
+        return m.author == ctx.author and m.channel == ctx.channel
 
-    while attempts < 3:  # Allow up to 3 attempts
-        def check(m):
-            return m.author == ctx.author and m.channel == ctx.channel
+    msg = await bot.wait_for('message', check=check)
+    if msg.content.strip().lower() == answer4:
+        user_games[ctx.author.id] += 1
+        await ctx.send("Correct! You earned a part of the flag: " + flag_parts[3])
+        await ctx.send("Congratulations! You've completed all the games! Here's your full flag: " + "".join(flag_parts))
+        await ctx.send("Thank you for playing! Type `start` to play again.")
+    else:
+        await ctx.send("Wrong answer! The correct answer was: " + answer4)
+        await ctx.send("Thank you for playing! Type `start` to play again.")
 
-        msg = await bot.wait_for('message', check=check)
-        if msg.content.strip().lower() == answer4:
-            user_games[ctx.author.id] += 1
-            await ctx.send("Correct! You earned a part of the flag: " + flag_parts[3])
-            await ctx.send("Congratulations! You've completed all the games! Here's your full flag: " + "".join(flag_parts))
-            await ctx.send("Thank you for playing! Type `start` to play again.")
-            return
-        else:
-            attempts += 1
-            if attempts < 3:
-                await ctx.send("Wrong answer! You have {} attempts left. {}".format(3 - attempts, random.choice(supportive_messages)))
-            else:
-                await ctx.send("Wrong answer! You've used all attempts. The correct answer was: " + answer4)
-                await ctx.send("Thank you for playing! Type `start` to play again.")
-                return
+    del active_games[ctx.author.id]  # Mark user as inactive
 
 keep_alive()
 bot.run(token)
