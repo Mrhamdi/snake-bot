@@ -44,6 +44,22 @@ flags = [
 ]
 total_games = len(flags)
 
+
+
+# Flag to check if the update message has been sent
+update_message_sent = False
+
+async def check_for_update(message):
+    global update_message_sent
+
+    if not update_message_sent:
+        # Send the update message to the channel
+        await message.channel.send("🔔 The bot has been updated! Please type 'start' again to continue.")
+        
+        # Set the flag to True to prevent sending the message again
+        update_message_sent = True
+
+
 @bot.event
 async def on_ready():
     print(f'Bot is ready as {bot.user}!')
@@ -204,24 +220,26 @@ async def check_attempts(message, user_id, game_number):
         return True
     return False
 
-first_blood_sent = False  
+winners = []  # List to track winners
 
 async def check_completion(message, user_id):
-    global first_blood_sent  
+    global winners  
 
     if len(completed_games[user_id]) == total_games:
-        
-        if not first_blood_sent:
-            await notify_first_blood(message.author.name)  
-            first_blood_sent = True  
+        # Add user to the winners list if not already present
+        if user_id not in winners:
+            winners.append(user_id)
 
-        await message.channel.send(f"Congratulations, {message.author.name}! Your flag is: `sicca{{dkdnjdnj}}`")
+            # Notify the user of their win
+            await message.channel.send(f"Congratulations, {message.author.name}! Your flag is: " + flag)
 
+            # Notify that this player is a winner
+            await notify_winner(message.author.name)
 
-async def notify_first_blood(player_name):
+async def notify_winner(player_name):
     channel = bot.get_channel(1296056974097649734)
     if channel:
-        await channel.send(f"🏆 First Blood! Congratulations to {player_name} for completing all games first!")
+        await channel.send(f"🏆 Congratulations to {player_name} for completing all games and becoming a winner!")
 
 keep_alive()
 bot.run(token)
