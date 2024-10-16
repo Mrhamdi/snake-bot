@@ -163,9 +163,10 @@ async def game_6(message, user_id):
     await message.channel.send("Game 7: List all files in a directory using linux command")
     await play_game_logic(message, user_id, answer7, 7)
 
-async def game_7(message, user_id):
+async def game_8(message, user_id):
     await message.channel.send("Game 8: Decode: 'Dg qhg vc qh'")
     await play_game_logic(message, user_id, answer8, 8)
+
 
 async def game_8(message, user_id):
     await message.channel.send("Game 9:I have branches, but no leaves, no trunk, and no fruit. What am I?")
