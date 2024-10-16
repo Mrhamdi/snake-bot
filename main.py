@@ -2,7 +2,9 @@ import discord
 from discord.ext import commands
 from keep_alive import keep_alive
 import os 
-# Set up your token and intents
+
+
+
 token = os.environ["token"]
 part1 = os.environ["part1"]
 part2= os.environ["part2"]
@@ -179,7 +181,7 @@ async def play_game_logic(message, user_id, correct_answer, game_number):
 
     while True:
         msg = await bot.wait_for('message', check=check)
-        if msg.content.strip().lower() == correct_answer.lower():  # Case-insensitive check
+        if msg.content.strip().lower() == correct_answer.lower():  
             await message.channel.send(f"Correct! You earned: {flags[game_number - 1]}")
             completed_games[user_id].add(game_number)
             incorrect_attempts[user_id][game_number] = 0
@@ -201,9 +203,24 @@ async def check_attempts(message, user_id, game_number):
         return True
     return False
 
+first_blood_sent = False  
+
 async def check_completion(message, user_id):
+    global first_blood_sent  
+
     if len(completed_games[user_id]) == total_games:
-        await message.channel.send(f"Congratulations, {message.author.name}! Your flag is:" +"`"+flag+"`")
+        
+        if not first_blood_sent:
+            await notify_first_blood(message.author.name)  
+            first_blood_sent = True  
+
+        await message.channel.send(f"Congratulations, {message.author.name}! Your flag is: `sicca{{dkdnjdnj}}`")
+
+
+async def notify_first_blood(player_name):
+    channel = bot.get_channel(1296056974097649734)
+    if channel:
+        await channel.send(f"🏆 First Blood! Congratulations to {player_name} for completing all games first!")
 
 keep_alive()
 bot.run(token)
