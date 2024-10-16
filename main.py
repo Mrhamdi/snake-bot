@@ -164,7 +164,7 @@ async def game_6(message, user_id):
     await play_game_logic(message, user_id, answer7, 7)
 
 async def game_7(message, user_id):
-    await message.channel.send("Game 8: Decode: 'Dg qhg vc qh'")
+    await message.channel.send("Game 8: Decode: 'Or fher gb or'")
     await play_game_logic(message, user_id, answer8, 8)
 
 
