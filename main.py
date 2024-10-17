@@ -3,48 +3,44 @@ from discord.ext import commands
 from keep_alive import keep_alive
 import os 
 
-
-
+# Load environment variables
 token = os.environ["token"]
 part1 = os.environ["part1"]
-part2= os.environ["part2"]
+part2 = os.environ["part2"]
 part3 = os.environ["part3"]
 part4 = os.environ["part4"]
 part5 = os.environ["part5"]
-part6= os.environ["part6"]
-part7= os.environ["part7"]
-part8= os.environ["part8"]
-part9= os.environ["part9"]
-part10= os.environ["part10"]
-flag= os.environ["flag"]
+part6 = os.environ["part6"]
+part7 = os.environ["part7"]
+part8 = os.environ["part8"]
+part9 = os.environ["part9"]
+part10 = os.environ["part10"]
+flag = os.environ["flag"]
 answer1 = os.environ["answer1"]
-answer2= os.environ["answer2"]
+answer2 = os.environ["answer2"]
 answer3 = os.environ["answer3"]
 answer4 = os.environ["answer4"]
 answer5 = os.environ["answer5"]
-answer6= os.environ["answer6"]
-answer7= os.environ["answer7"]
-answer8= os.environ["answer8"]
-answer9= os.environ["answer9"]
-answer10= os.environ["answer10"]
+answer6 = os.environ["answer6"]
+answer7 = os.environ["answer7"]
+answer8 = os.environ["answer8"]
+answer9 = os.environ["answer9"]
+answer10 = os.environ["answer10"]
 
-
+# Set up Discord bot intents
 intents = discord.Intents.default()
 intents.messages = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
+# Game state tracking
 player_res = {}
 completed_games = {}
 incorrect_attempts = {}
-flags = [
-    part1, part2, part3, 
-    part4, part5,part6, 
-    part7, part8,part9, 
-    part10
-]
+flags = [part1, part2, part3, part4, part5, part6, part7, part8, part9, part10]
 total_games = len(flags)
 
-
+# Challenge state
+challenge_active = False  # Set this to True when the challenge is active
 
 # Flag to check if the update message has been sent
 update_message_sent = False
@@ -53,12 +49,8 @@ async def check_for_update(message):
     global update_message_sent
 
     if not update_message_sent:
-        # Send the update message to the channel
         await message.channel.send("🔔 The bot has been updated! Please type 'start' again to continue.")
-        
-        # Set the flag to True to prevent sending the message again
         update_message_sent = True
-
 
 @bot.event
 async def on_ready():
@@ -72,6 +64,10 @@ async def on_message(message):
     user_id = message.author.id
 
     if message.content.lower() == "start":
+        if not challenge_active:
+            await message.channel.send("🚫 The challenge has ended. Stay tuned for the next one!")
+            return
+        
         if user_id in player_res:
             await message.channel.send("You are already in a game! Please finish the current game first.")
         else:
@@ -93,7 +89,7 @@ async def show_games(message, user_id):
         "7: Game 7 - FileLister",
         "8: Game 8 - Colosseum",
         "9: Game 9 - BranchMystery",
-       "10: Game 10 - TEnigma"
+        "10: Game 10 - TEnigma"
     ]
 
     formatted_games = []
@@ -103,8 +99,8 @@ async def show_games(message, user_id):
         else:
             formatted_games.append(game)
 
-    await message.channel.send("let's start , Here are the available games:\n" + "\n".join(formatted_games))
-    await message.channel.send("\n"+"Please type the number of the game you want to play!")
+    await message.channel.send("Let's start! Here are the available games:\n" + "\n".join(formatted_games))
+    await message.channel.send("\nPlease type the number of the game you want to play!")
 
     while True:
         def check(m):
@@ -123,7 +119,7 @@ async def show_games(message, user_id):
                 await play_game(message, user_id)
                 break
         else:
-            await message.channel.send("Invalid! Please choose a valid game number")
+            await message.channel.send("Invalid! Please choose a valid game number.")
 
 async def play_game(message, user_id):
     game_number = player_res[user_id]
@@ -156,11 +152,11 @@ async def game_0(message, user_id):
     await play_game_logic(message, user_id, answer1, 1)
 
 async def game_1(message, user_id):
-    await message.channel.send("Game 2:HexMe 255")
+    await message.channel.send("Game 2: HexMe 255")
     await play_game_logic(message, user_id, answer2, 2)
 
 async def game_2(message, user_id):
-    await message.channel.send("Game 3:I speak without a mouth and hear without ears. What am I?")
+    await message.channel.send("Game 3: I speak without a mouth and hear without ears. What am I?")
     await play_game_logic(message, user_id, answer3, 3)
 
 async def game_3(message, user_id):
@@ -183,9 +179,8 @@ async def game_7(message, user_id):
     await message.channel.send("Game 8: Decode: 'Or fher gb or'")
     await play_game_logic(message, user_id, answer8, 8)
 
-
 async def game_8(message, user_id):
-    await message.channel.send("Game 9:I have branches, but no leaves, no trunk, and no fruit. What am I?")
+    await message.channel.send("Game 9: I have branches, but no leaves, no trunk, and no fruit. What am I?")
     await play_game_logic(message, user_id, answer9, 9)
 
 async def game_9(message, user_id):
@@ -199,7 +194,7 @@ async def play_game_logic(message, user_id, correct_answer, game_number):
     while True:
         msg = await bot.wait_for('message', check=check)
         if msg.content.strip().lower() == correct_answer.lower():  
-            await message.channel.send(f"Correct , You earned: {flags[game_number - 1]}")
+            await message.channel.send(f"Correct! You earned: {flags[game_number - 1]}")
             completed_games[user_id].add(game_number)
             incorrect_attempts[user_id][game_number] = 0
             await check_completion(message, user_id)
@@ -215,7 +210,7 @@ async def play_game_logic(message, user_id, correct_answer, game_number):
 
 async def check_attempts(message, user_id, game_number):
     if incorrect_attempts[user_id][game_number] >= 3:
-        await message.channel.send("You've reached the max incorrect guesses . ")
+        await message.channel.send("You've reached the max incorrect guesses.")
         await show_games(message, user_id)
         return True
     return False
@@ -226,14 +221,9 @@ async def check_completion(message, user_id):
     global winners  
 
     if len(completed_games[user_id]) == total_games:
-        # Add user to the winners list if not already present
         if user_id not in winners:
             winners.append(user_id)
-
-            # Notify the user of their win
             await message.channel.send(f"Congratulations, {message.author.name}! Your flag is: " + flag)
-
-            # Notify that this player is a winner
             await notify_winner(message.author.name)
 
 async def notify_winner(player_name):
